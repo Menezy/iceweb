@@ -1,0 +1,33 @@
+# Protect My Directories
+Options -Indexes
+
+# Protect my htaccess file
+<Files .htaccess>
+order deny,allow
+deny from all
+</Files>
+
+<FilesMatch "\.(?i:gif|jpe?g|png|ico|css|js|swf)$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "max-age=604800, public, must-revalidate"
+  </IfModule>
+</FilesMatch>
+
+#RewriteEngine On
+#RewriteCond %{HTTPS} !=on
+#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301] 
+
+# Clean Url for User Profiles
+  AddDefaultCharset UTF-8
+  FileETag None
+  Options +FollowSymLinks -MultiViews
+
+  RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/+read\.php\?newsID=([^\s&]+) [NC]
+  RewriteRule ^ read/%1? [R=301,L]
+  RewriteRule ^read/([^/]+)/?$ read.php?newsID=$1 [L,QSA]
+
+RewriteEngine On
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteRule ^([^.]+)$ $1.php [NC,L]
+
+# ErrorDocument 404 http://localhost/Ice/404
